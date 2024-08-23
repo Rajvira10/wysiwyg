@@ -361,8 +361,6 @@ function applyStyleToSelection(styleName, value) {
       range.insertNode(span);
     }
 
-    // Clear the selection
-    selection.removeAllRanges();
   }
 }
 
@@ -395,7 +393,10 @@ const loremIpsumParagraphs = [
     "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
     "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris."
+    "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.",
+    "Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit.",
+    "Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros est euismod turpis, id tincidunt sapien risus a quam.",
+    "Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada nulla a mi.",
 ];
 
 generateLoremIpsumButton.addEventListener("click", () => {
@@ -414,8 +415,9 @@ generateLoremIpsumButton.addEventListener("click", () => {
 
 document.addEventListener("DOMContentLoaded", function () {
   const editor = document.getElementById("editor");
-  const undoButton = document.getElementById("undoButton");
-  const redoButton = document.getElementById("redoButton");
+  const charCount = document.getElementById("charCount");
+  const lineCount = document.getElementById("lineCount");
+  const wordCount = document.getElementById("wordCount");
 
   let history = [];
   let historyIndex = -1;
@@ -430,6 +432,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (historyIndex > 0) {
       historyIndex--;
       editor.innerHTML = history[historyIndex];
+      updateCharCount();
+      updateLineCount();
+      updateWordCount();
     }
   }
 
@@ -437,13 +442,45 @@ document.addEventListener("DOMContentLoaded", function () {
     if (historyIndex < history.length - 1) {
       historyIndex++;
       editor.innerHTML = history[historyIndex];
+      updateCharCount();
+      updateLineCount();
+      updateWordCount();
     }
   }
 
-  editor.addEventListener("input", saveState);
-  undoButton.addEventListener("click", undo);
-  redoButton.addEventListener("click", redo);
+  function updateCharCount() {
+    const text = editor.innerText || editor.textContent;
+    // Trim the last newline character to avoid counting it as a visible character
+    const trimmedText = text.endsWith('\n') ? text.slice(0, -1) : text;
+    charCount.textContent = `Characters: ${trimmedText.length}`;
+  }
+
+  function updateLineCount() {
+    const text = editor.innerText || editor.textContent;
+    const lines = text.split(/\n/).filter(line => line.trim().length > 0);
+    lineCount.textContent = `Lines: ${lines.length}`;
+  }
+
+  function updateWordCount() {
+    const text = editor.innerText || editor.textContent;
+    const words = text.split(/\s+/).filter(word => word.length > 0);
+    wordCount.textContent = `Words: ${words.length}`;
+  }
+
+  editor.addEventListener("input", function () {
+    saveState();
+    updateCharCount();
+    updateLineCount();
+    updateWordCount();
+  });
+
+  document.getElementById("undoButton").addEventListener("click", undo);
+  document.getElementById("redoButton").addEventListener("click", redo);
 
   // Save the initial state
   saveState();
+  updateCharCount();
+  updateLineCount();
+  updateWordCount();
 });
+

@@ -249,3 +249,15 @@ body {
   height: 100%;
   line-height: 24px;
 }
+
+.bottombar {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bottombar div {
+  margin: 0 10px;
+}
