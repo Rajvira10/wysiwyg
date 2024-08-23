@@ -3,14 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Advanced WYSIWYG Editor</title>
+    <title>WYSIWYG Editor</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="editor-container">
       <div class="toolbar">
         <div class="toolbar-group">
-          <!-- Other toolbar items -->
+          <button id="undoButton" title="Undo">&#x21B6;</button>
+          <button id="redoButton" title="Redo">&#x21B7;</button>
           <select id="fontName">
             <option value="Arial">Arial</option>
             <option value="Courier New">Courier New</option>
@@ -56,7 +57,7 @@
           <select id="lineHeight">
             <option value="1">1</option>
             <option value="1.15">1.15</option>
-            <option value="1.5">1.5</option>
+            <option value="1.5" selected>1.5</option>
             <option value="2">2</option>
           </select>
           <select id="letterSpacing">
@@ -68,18 +69,309 @@
           <button id="bold" title="Bold"><b>B</b></button>
           <button id="italic" title="Italic"><i>I</i></button>
           <button id="underline" title="Underline"><u>U</u></button>
-          <input type="color" id="fontColor" title="Font Color" />
-          <input type="color" id="bgColor" title="Background Color" />
+
+          <div class="color-picker" id="fontColorPicker">
+            <button id="fontColor" title="Font Color">A</button>
+            <div class="color-palette">
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #ffffff"></div>
+                <div class="color-cell" style="background-color: #f1f5f9"></div>
+                <div class="color-cell" style="background-color: #e2e8f0"></div>
+                <div class="color-cell" style="background-color: #cbd5e1"></div>
+                <div class="color-cell" style="background-color: #94a3b8"></div>
+                <div class="color-cell" style="background-color: #64748b"></div>
+                <div class="color-cell" style="background-color: #475569"></div>
+                <div class="color-cell" style="background-color: #334155"></div>
+                <div class="color-cell" style="background-color: #1e293b"></div>
+                <div class="color-cell" style="background-color: #000000"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fef2f2"></div>
+                <div class="color-cell" style="background-color: #fee2e2"></div>
+                <div class="color-cell" style="background-color: #fecaca"></div>
+                <div class="color-cell" style="background-color: #fca5a5"></div>
+                <div class="color-cell" style="background-color: #f87171"></div>
+                <div class="color-cell" style="background-color: #ef4444"></div>
+                <div class="color-cell" style="background-color: #dc2626"></div>
+                <div class="color-cell" style="background-color: #b91c1c"></div>
+                <div class="color-cell" style="background-color: #991b1b"></div>
+                <div class="color-cell" style="background-color: #7f1d1d"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fffbeb"></div>
+                <div class="color-cell" style="background-color: #fef3c7"></div>
+                <div class="color-cell" style="background-color: #fde68a"></div>
+                <div class="color-cell" style="background-color: #fcd34d"></div>
+                <div class="color-cell" style="background-color: #fbbf24"></div>
+                <div class="color-cell" style="background-color: #f59e0b"></div>
+                <div class="color-cell" style="background-color: #d97706"></div>
+                <div class="color-cell" style="background-color: #b45309"></div>
+                <div class="color-cell" style="background-color: #92400e"></div>
+                <div class="color-cell" style="background-color: #78350f"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #eff6ff"></div>
+                <div class="color-cell" style="background-color: #dbeafe"></div>
+                <div class="color-cell" style="background-color: #bfdbfe"></div>
+                <div class="color-cell" style="background-color: #93c5fd"></div>
+                <div class="color-cell" style="background-color: #60a5fa"></div>
+                <div class="color-cell" style="background-color: #3b82f6"></div>
+                <div class="color-cell" style="background-color: #2563eb"></div>
+                <div class="color-cell" style="background-color: #1d4ed8"></div>
+                <div class="color-cell" style="background-color: #1e40af"></div>
+                <div class="color-cell" style="background-color: #1e3a8a"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #ecfdf5"></div>
+                <div class="color-cell" style="background-color: #d1fae5"></div>
+                <div class="color-cell" style="background-color: #a7f3d0"></div>
+                <div class="color-cell" style="background-color: #6ee7b7"></div>
+                <div class="color-cell" style="background-color: #34d399"></div>
+                <div class="color-cell" style="background-color: #10b981"></div>
+                <div class="color-cell" style="background-color: #059669"></div>
+                <div class="color-cell" style="background-color: #047857"></div>
+                <div class="color-cell" style="background-color: #065f46"></div>
+                <div class="color-cell" style="background-color: #064e3b"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #f0fdfa"></div>
+                <div class="color-cell" style="background-color: #ccfbf1"></div>
+                <div class="color-cell" style="background-color: #99f6e4"></div>
+                <div class="color-cell" style="background-color: #5eead4"></div>
+                <div class="color-cell" style="background-color: #2dd4bf"></div>
+                <div class="color-cell" style="background-color: #14b8a6"></div>
+                <div class="color-cell" style="background-color: #0d9488"></div>
+                <div class="color-cell" style="background-color: #0f766e"></div>
+                <div class="color-cell" style="background-color: #115e59"></div>
+                <div class="color-cell" style="background-color: #134e4a"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fff7ed"></div>
+                <div class="color-cell" style="background-color: #ffedd5"></div>
+                <div class="color-cell" style="background-color: #fed7aa"></div>
+                <div class="color-cell" style="background-color: #fdba74"></div>
+                <div class="color-cell" style="background-color: #fb923c"></div>
+                <div class="color-cell" style="background-color: #f97316"></div>
+                <div class="color-cell" style="background-color: #ea580c"></div>
+                <div class="color-cell" style="background-color: #c2410c"></div>
+                <div class="color-cell" style="background-color: #9a3412"></div>
+                <div class="color-cell" style="background-color: #7c2d12"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fdf2f8"></div>
+                <div class="color-cell" style="background-color: #fce7f3"></div>
+                <div class="color-cell" style="background-color: #fbcfe8"></div>
+                <div class="color-cell" style="background-color: #f9a8d4"></div>
+                <div class="color-cell" style="background-color: #f472b6"></div>
+                <div class="color-cell" style="background-color: #ec4899"></div>
+                <div class="color-cell" style="background-color: #db2777"></div>
+                <div class="color-cell" style="background-color: #be185d"></div>
+                <div class="color-cell" style="background-color: #9d174d"></div>
+                <div class="color-cell" style="background-color: #831843"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #f5f3ff"></div>
+                <div class="color-cell" style="background-color: #ede9fe"></div>
+                <div class="color-cell" style="background-color: #ddd6fe"></div>
+                <div class="color-cell" style="background-color: #c4b5fd"></div>
+                <div class="color-cell" style="background-color: #a78bfa"></div>
+                <div class="color-cell" style="background-color: #8b5cf6"></div>
+                <div class="color-cell" style="background-color: #7c3aed"></div>
+                <div class="color-cell" style="background-color: #6d28d9"></div>
+                <div class="color-cell" style="background-color: #5b21b6"></div>
+                <div class="color-cell" style="background-color: #4c1d95"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #f0fdf4"></div>
+                <div class="color-cell" style="background-color: #dcfce7"></div>
+                <div class="color-cell" style="background-color: #bbf7d0"></div>
+                <div class="color-cell" style="background-color: #86efac"></div>
+                <div class="color-cell" style="background-color: #4ade80"></div>
+                <div class="color-cell" style="background-color: #22c55e"></div>
+                <div class="color-cell" style="background-color: #16a34a"></div>
+                <div class="color-cell" style="background-color: #15803d"></div>
+                <div class="color-cell" style="background-color: #166534"></div>
+                <div class="color-cell" style="background-color: #14532d"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fff5f7"></div>
+                <div class="color-cell" style="background-color: #fed7e2"></div>
+                <div class="color-cell" style="background-color: #fbb6ce"></div>
+                <div class="color-cell" style="background-color: #f687b3"></div>
+                <div class="color-cell" style="background-color: #ed64a6"></div>
+                <div class="color-cell" style="background-color: #d53f8c"></div>
+                <div class="color-cell" style="background-color: #b83280"></div>
+                <div class="color-cell" style="background-color: #97266d"></div>
+                <div class="color-cell" style="background-color: #702459"></div>
+                <div class="color-cell" style="background-color: #521b41"></div>
+              </div>
+              <div
+                class="more-colors"
+                id="moreFontColorsLink"
+                style="user-select: none"
+              >
+                More Colors...
+              </div>
+              <input type="color" id="moreFontColors" style="display: none" />
+            </div>
+          </div>
+
+          <div class="color-picker" id="bgColorPicker">
+            <button id="bgColor" title="Background Color">
+              <span style="background-color: yellow">A</span>
+            </button>
+            <div class="color-palette">
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #ffffff"></div>
+                <div class="color-cell" style="background-color: #f1f5f9"></div>
+                <div class="color-cell" style="background-color: #e2e8f0"></div>
+                <div class="color-cell" style="background-color: #cbd5e1"></div>
+                <div class="color-cell" style="background-color: #94a3b8"></div>
+                <div class="color-cell" style="background-color: #64748b"></div>
+                <div class="color-cell" style="background-color: #475569"></div>
+                <div class="color-cell" style="background-color: #334155"></div>
+                <div class="color-cell" style="background-color: #1e293b"></div>
+                <div class="color-cell" style="background-color: #000000"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fef2f2"></div>
+                <div class="color-cell" style="background-color: #fee2e2"></div>
+                <div class="color-cell" style="background-color: #fecaca"></div>
+                <div class="color-cell" style="background-color: #fca5a5"></div>
+                <div class="color-cell" style="background-color: #f87171"></div>
+                <div class="color-cell" style="background-color: #ef4444"></div>
+                <div class="color-cell" style="background-color: #dc2626"></div>
+                <div class="color-cell" style="background-color: #b91c1c"></div>
+                <div class="color-cell" style="background-color: #991b1b"></div>
+                <div class="color-cell" style="background-color: #7f1d1d"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fffbeb"></div>
+                <div class="color-cell" style="background-color: #fef3c7"></div>
+                <div class="color-cell" style="background-color: #fde68a"></div>
+                <div class="color-cell" style="background-color: #fcd34d"></div>
+                <div class="color-cell" style="background-color: #fbbf24"></div>
+                <div class="color-cell" style="background-color: #f59e0b"></div>
+                <div class="color-cell" style="background-color: #d97706"></div>
+                <div class="color-cell" style="background-color: #b45309"></div>
+                <div class="color-cell" style="background-color: #92400e"></div>
+                <div class="color-cell" style="background-color: #78350f"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #eff6ff"></div>
+                <div class="color-cell" style="background-color: #dbeafe"></div>
+                <div class="color-cell" style="background-color: #bfdbfe"></div>
+                <div class="color-cell" style="background-color: #93c5fd"></div>
+                <div class="color-cell" style="background-color: #60a5fa"></div>
+                <div class="color-cell" style="background-color: #3b82f6"></div>
+                <div class="color-cell" style="background-color: #2563eb"></div>
+                <div class="color-cell" style="background-color: #1d4ed8"></div>
+                <div class="color-cell" style="background-color: #1e40af"></div>
+                <div class="color-cell" style="background-color: #1e3a8a"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #ecfdf5"></div>
+                <div class="color-cell" style="background-color: #d1fae5"></div>
+                <div class="color-cell" style="background-color: #a7f3d0"></div>
+                <div class="color-cell" style="background-color: #6ee7b7"></div>
+                <div class="color-cell" style="background-color: #34d399"></div>
+                <div class="color-cell" style="background-color: #10b981"></div>
+                <div class="color-cell" style="background-color: #059669"></div>
+                <div class="color-cell" style="background-color: #047857"></div>
+                <div class="color-cell" style="background-color: #065f46"></div>
+                <div class="color-cell" style="background-color: #064e3b"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #f0fdfa"></div>
+                <div class="color-cell" style="background-color: #ccfbf1"></div>
+                <div class="color-cell" style="background-color: #99f6e4"></div>
+                <div class="color-cell" style="background-color: #5eead4"></div>
+                <div class="color-cell" style="background-color: #2dd4bf"></div>
+                <div class="color-cell" style="background-color: #14b8a6"></div>
+                <div class="color-cell" style="background-color: #0d9488"></div>
+                <div class="color-cell" style="background-color: #0f766e"></div>
+                <div class="color-cell" style="background-color: #115e59"></div>
+                <div class="color-cell" style="background-color: #134e4a"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fff7ed"></div>
+                <div class="color-cell" style="background-color: #ffedd5"></div>
+                <div class="color-cell" style="background-color: #fed7aa"></div>
+                <div class="color-cell" style="background-color: #fdba74"></div>
+                <div class="color-cell" style="background-color: #fb923c"></div>
+                <div class="color-cell" style="background-color: #f97316"></div>
+                <div class="color-cell" style="background-color: #ea580c"></div>
+                <div class="color-cell" style="background-color: #c2410c"></div>
+                <div class="color-cell" style="background-color: #9a3412"></div>
+                <div class="color-cell" style="background-color: #7c2d12"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fdf2f8"></div>
+                <div class="color-cell" style="background-color: #fce7f3"></div>
+                <div class="color-cell" style="background-color: #fbcfe8"></div>
+                <div class="color-cell" style="background-color: #f9a8d4"></div>
+                <div class="color-cell" style="background-color: #f472b6"></div>
+                <div class="color-cell" style="background-color: #ec4899"></div>
+                <div class="color-cell" style="background-color: #db2777"></div>
+                <div class="color-cell" style="background-color: #be185d"></div>
+                <div class="color-cell" style="background-color: #9d174d"></div>
+                <div class="color-cell" style="background-color: #831843"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #f5f3ff"></div>
+                <div class="color-cell" style="background-color: #ede9fe"></div>
+                <div class="color-cell" style="background-color: #ddd6fe"></div>
+                <div class="color-cell" style="background-color: #c4b5fd"></div>
+                <div class="color-cell" style="background-color: #a78bfa"></div>
+                <div class="color-cell" style="background-color: #8b5cf6"></div>
+                <div class="color-cell" style="background-color: #7c3aed"></div>
+                <div class="color-cell" style="background-color: #6d28d9"></div>
+                <div class="color-cell" style="background-color: #5b21b6"></div>
+                <div class="color-cell" style="background-color: #4c1d95"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #f0fdf4"></div>
+                <div class="color-cell" style="background-color: #dcfce7"></div>
+                <div class="color-cell" style="background-color: #bbf7d0"></div>
+                <div class="color-cell" style="background-color: #86efac"></div>
+                <div class="color-cell" style="background-color: #4ade80"></div>
+                <div class="color-cell" style="background-color: #22c55e"></div>
+                <div class="color-cell" style="background-color: #16a34a"></div>
+                <div class="color-cell" style="background-color: #15803d"></div>
+                <div class="color-cell" style="background-color: #166534"></div>
+                <div class="color-cell" style="background-color: #14532d"></div>
+              </div>
+              <div class="color-row">
+                <div class="color-cell" style="background-color: #fff5f7"></div>
+                <div class="color-cell" style="background-color: #fed7e2"></div>
+                <div class="color-cell" style="background-color: #fbb6ce"></div>
+                <div class="color-cell" style="background-color: #f687b3"></div>
+                <div class="color-cell" style="background-color: #ed64a6"></div>
+                <div class="color-cell" style="background-color: #d53f8c"></div>
+                <div class="color-cell" style="background-color: #b83280"></div>
+                <div class="color-cell" style="background-color: #97266d"></div>
+                <div class="color-cell" style="background-color: #702459"></div>
+                <div class="color-cell" style="background-color: #521b41"></div>
+              </div>
+              <div
+                class="more-colors"
+                id="moreBgColorsLink"
+                style="user-select: none"
+              >
+                More Colors...
+              </div>
+              <input type="color" id="moreBgColors" style="display: none" />
+            </div>
+          </div>
           <button id="alignLeft" title="Align Left">&#8676;</button>
           <button id="alignCenter" title="Align Center">&#8690;</button>
           <button id="alignRight" title="Align Right">&#8677;</button>
           <button id="justify" title="Justify">&#8701;</button>
-          <button id="insertOrderedList" title="Insert Ordered List">
-            &#35;
-          </button>
+          <button id="insertOrderedList" title="Insert Ordered List">1.</button>
           <button id="insertUnorderedList" title="Insert Unordered List">
-            &#8226;
+            &#x25CF;
           </button>
+
           <button id="toggleHtml" title="Toggle HTML">&#x3C;/&#x3E;</button>
           <button id="insertImage" title="Insert Image">&#128247;</button>
           <button id="createLink" title="Create Link">&#128279;</button>
@@ -97,6 +389,9 @@
               </button>
             </div>
           </div>
+          <button id="generateLoremIpsum" title="Generate Dummy Text">
+            &#x1F4D6;
+          </button>
         </div>
       </div>
       <div class="editor-wrapper">

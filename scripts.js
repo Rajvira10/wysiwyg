@@ -8,8 +8,6 @@ const letterSpacingSelect = document.getElementById("letterSpacing");
 const boldButton = document.getElementById("bold");
 const italicButton = document.getElementById("italic");
 const underlineButton = document.getElementById("underline");
-const fontColorInput = document.getElementById("fontColor");
-const bgColorInput = document.getElementById("bgColor");
 const alignLeftButton = document.getElementById("alignLeft");
 const alignCenterButton = document.getElementById("alignCenter");
 const alignRightButton = document.getElementById("alignRight");
@@ -59,13 +57,121 @@ underlineButton.addEventListener("click", () => {
   document.execCommand("underline", false);
 });
 
-fontColorInput.addEventListener("input", function () {
-  document.execCommand("foreColor", false, this.value);
+document.addEventListener("DOMContentLoaded", function () {
+  let savedSelection;
+
+  function saveSelection() {
+    const selection = window.getSelection();
+    savedSelection = selection.getRangeAt(0).cloneRange();
+    console.log(savedSelection.toString());
+  }
+
+  const editor = document.getElementById("editor");
+    editor.addEventListener("keyup", function () {
+    saveSelection();
+    }
+    );
+
+  function restoreSelection() {
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    if (savedSelection) {
+      selection.addRange(savedSelection);
+    }
+  }
+
+  function applyColorToSelection(styleProperty, color) {
+    document.execCommand(styleProperty === "color" ? "foreColor" : "hiliteColor", false, color);
+  }
+
+  const fontColorCells = document.querySelectorAll("#fontColorPicker .color-cell");
+  fontColorCells.forEach(cell => {
+    cell.addEventListener("mousedown", function (event) {
+      event.preventDefault();
+      restoreSelection();
+      applyColorToSelection("color", event.target.style.backgroundColor);
+      saveSelection();
+    });
+  });
+
+  const bgColorCells = document.querySelectorAll("#bgColorPicker .color-cell");
+  bgColorCells.forEach(cell => {
+    cell.addEventListener("mousedown", function (event) {
+      event.preventDefault();
+      restoreSelection();
+      applyColorToSelection("backgroundColor", event.target.style.backgroundColor);
+      saveSelection();
+    });
+  });
+
+  // More Colors functionality for font color
+  const moreFontColorsLink = document.getElementById("moreFontColorsLink");
+  const moreFontColorsInput = document.getElementById("moreFontColors");
+  const fontColorPicker = document.getElementById("fontColorPicker");
+
+  moreFontColorsLink.addEventListener("mousedown", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    fontColorPicker.classList.add("active");
+    setTimeout(() => {
+      saveSelection();
+      moreFontColorsInput.click();
+    }, 0);
+  });
+
+  moreFontColorsInput.addEventListener("input", function () {
+    restoreSelection();
+    applyColorToSelection("color", this.value);
+    saveSelection();
+  });
+
+  moreFontColorsInput.addEventListener("change", function () {
+    fontColorPicker.classList.remove("active");
+  });
+
+  // More Colors functionality for background color
+  const moreBgColorsLink = document.getElementById("moreBgColorsLink");
+  const moreBgColorsInput = document.getElementById("moreBgColors");
+  const bgColorPicker = document.getElementById("bgColorPicker");
+
+  moreBgColorsLink.addEventListener("mousedown", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    bgColorPicker.classList.add("active");
+    setTimeout(() => {
+      saveSelection();
+      moreBgColorsInput.click();
+    }, 0);
+  });
+
+  moreBgColorsInput.addEventListener("input", function () {
+    restoreSelection();
+    applyColorToSelection("backgroundColor", this.value);
+    saveSelection();
+  });
+
+  moreBgColorsInput.addEventListener("change", function () {
+    bgColorPicker.classList.remove("active");
+  });
+
+  // Prevent color pickers from closing when clicking inside them
+  fontColorPicker.addEventListener("click", function (event) {
+    event.stopPropagation();
+  });
+
+  bgColorPicker.addEventListener("click", function (event) {
+    event.stopPropagation();
+  });
+
+  // Close color pickers when clicking outside
+  document.addEventListener("click", function () {
+    fontColorPicker.classList.remove("active");
+    bgColorPicker.classList.remove("active");
+  });
 });
 
-bgColorInput.addEventListener("input", function () {
-  document.execCommand("hiliteColor", false, this.value);
-});
+
+
 
 alignLeftButton.addEventListener("click", () => {
   document.execCommand("justifyLeft", false);
@@ -101,6 +207,13 @@ toggleHtmlButton.addEventListener("click", () => {
     editor.style.display = "block";
     htmlEditor.style.display = "none";
   }
+});
+
+editor.addEventListener("keydown", function (event) {
+if (event.key === "Tab") {
+    event.preventDefault();
+    document.execCommand("insertHTML", false, "&nbsp;&nbsp;&nbsp;&nbsp;");
+}
 });
 
 insertImageButton.addEventListener("click", () => {
@@ -275,4 +388,62 @@ function getSelectedTable() {
   return null;
 }
 
+const generateLoremIpsumButton = document.getElementById("generateLoremIpsum");
 
+const loremIpsumParagraphs = [
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris."
+];
+
+generateLoremIpsumButton.addEventListener("click", () => {
+    const numberOfParagraphs = prompt("Enter number of paragraphs:", "1");
+    if (numberOfParagraphs) {
+        const paragraphsToInsert = [];
+        for (let i = 0; i < Math.min(numberOfParagraphs, loremIpsumParagraphs.length); i++) {
+            paragraphsToInsert.push(loremIpsumParagraphs[i % loremIpsumParagraphs.length]);
+        }
+        const loremIpsumText = paragraphsToInsert.join("\n\n");
+
+        editor.focus();
+        document.execCommand("insertHTML", false, `<p>${loremIpsumText.replace(/\n\n/g, '</p><p>')}</p>`);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const editor = document.getElementById("editor");
+  const undoButton = document.getElementById("undoButton");
+  const redoButton = document.getElementById("redoButton");
+
+  let history = [];
+  let historyIndex = -1;
+
+  function saveState() {
+    history = history.slice(0, historyIndex + 1);
+    history.push(editor.innerHTML);
+    historyIndex++;
+  }
+
+  function undo() {
+    if (historyIndex > 0) {
+      historyIndex--;
+      editor.innerHTML = history[historyIndex];
+    }
+  }
+
+  function redo() {
+    if (historyIndex < history.length - 1) {
+      historyIndex++;
+      editor.innerHTML = history[historyIndex];
+    }
+  }
+
+  editor.addEventListener("input", saveState);
+  undoButton.addEventListener("click", undo);
+  redoButton.addEventListener("click", redo);
+
+  // Save the initial state
+  saveState();
+});
